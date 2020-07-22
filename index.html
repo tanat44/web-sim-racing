@@ -2,138 +2,14 @@
 <html>
 	<head>
 		<meta charset="utf-8">
-		<title>My first three.js app</title>
+		<title>Web-Sim-Racing</title>
 		<style>
 			body { margin: 0; }
 			canvas { display: block; }
 		</style>
 	</head>
 	<body>
-		<script src="./three.js"></script>
-		<script>
-			var scene = new THREE.Scene();
-            var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
-
-            var renderer = new THREE.WebGLRenderer();
-            renderer.setSize( window.innerWidth, window.innerHeight );
-            document.body.appendChild( renderer.domElement );
-
-            // draw cube
-            var geometry = new THREE.BoxBufferGeometry( 10,10,10 );
-            var material = new THREE.MeshBasicMaterial( { color: 0x0000ff } );
-            var car = new THREE.Mesh( geometry, material );
-            car.position.set(0, 5, 0 )
-            scene.add( car );
-
-            // draw plane
-            geometry = new THREE.PlaneGeometry(100, 100)
-            material = new THREE.MeshBasicMaterial( {color: 0xffff00, side: THREE.DoubleSide} );
-            var plane = new THREE.Mesh (geometry, material)
-            plane.rotation.x = Math.PI/2
-            scene.add( plane )
-
-            // draw line
-            var points = [];
-            points.push( new THREE.Vector3( - 10, 0, 0 ) );
-            points.push( new THREE.Vector3( 0, 10, 0 ) );
-            points.push( new THREE.Vector3( 10, 0, 0 ) );
-
-            geometry = new THREE.BufferGeometry().setFromPoints( points );
-            material = new THREE.MeshBasicMaterial( { color: 0x0000ff } );
-            var line = new THREE.Line( geometry, material );
-            // scene.add(line)
-
-            // camera
-            camera.position.set( 0, 100, 100 );
-            camera.lookAt(0,0,0)
-  
-            // Lights
-            // var ambientLight = new THREE.AmbientLight( 0x404040 );
-            // scene.addLight( ambientLight );
-
-            // var directionalLight = new THREE.DirectionalLight( 0xffffff );
-            // directionalLight.position.x = 1;
-            // directionalLight.position.y = 1;
-            // directionalLight.position.z = 0.75;
-            // directionalLight.position.normalize();
-            // scene.addLight( directionalLight );
-
-            // var directionalLight = new THREE.DirectionalLight( 0x808080 );
-            // directionalLight.position.x = - 1;
-            // directionalLight.position.y = 1;
-            // directionalLight.position.z = - 0.75;
-            // directionalLight.position.normalize();
-            // scene.addLight( directionalLight );
-
-            // keyboard event
-            var keymap = {}; // You could also use an array
-            document.addEventListener("keydown", onkeydown, false);
-            document.addEventListener("keyup", onkeyup, false);
-            onkeydown = onkeyup = function(e){
-                e = e || event; // to deal with IE
-                keymap[e.keyCode] = e.type == 'keydown';
-                /* insert conditional here */
-            }
-
-            function animate() {
-                requestAnimationFrame( animate );
-                if (keymap[87]) { // w
-                    car.position.z -= 1
-                } else if (keymap[83]) { // s
-                    car.position.z += 1
-                }
-
-                if (keymap[65]) { // a
-                    car.position.x -= 1
-                } else if (keymap[68]) { // d
-                    car.position.x += 1
-                }
-                renderer.render( scene, camera );
-            }
-            
-            animate();
-
-    
-
-
-            // document.addEventListener("keydown", onDocumentKeyDown, false);
-            function onDocumentKeyDown(event) {
-                event.preventDefault();
-                var keyCode = event.which;
-                if (keyCode == 37) {
-                    // left
-                    moveCamera(1,0)
-                } else if (keyCode == 38) {
-                    // up
-                    moveCamera(0,1)
-                } else if (keyCode == 39) {
-                    // right
-                    moveCamera(-1,0)
-                } else if (keyCode == 40) {
-                    // down
-                    moveCamera(0,-1)
-                } 
-                if (keyCode == 87) { //W
-                    car.position.z -= 1
-                } else if (keyCode == 83) { //S
-                    car.position.z += 1
-                } 
-                
-                if (keyCode == 65) { //A
-                    car.position.x -= 1
-                } else if (keyCode == 68) { //D
-                    car.position.x += 1
-                }
-            };
-
-            function moveCamera( angleX, angleY ) {
-
-                camera.position.x += angleX
-                camera.position.y += angleY
-                camera.updateMatrix();
-
-
-            }
-		</script>
+        <script src="./build/three.js"></script>
+		<script type="module" src="./main.js"> </script>
 	</body>
 </html>
