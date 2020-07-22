@@ -15,6 +15,7 @@ export class Car {
         this.wheelRadius = 3
 
         this.maxSpeed = 3
+        this.maxReverseSpeed = -1
         this.maxSteeringAngle = 30 // deg
         this.speed = 0
         this.steeringAngle = 0
@@ -32,7 +33,7 @@ export class Car {
         this.scene = scene
          
         this.position.y = this.wheelRadius
-        var geometry = new THREE.BoxBufferGeometry( this.width, 2, this.length );
+        var geometry = new THREE.BoxGeometry( this.width, 2, this.length );
         var material = new THREE.MeshLambertMaterial( { color: 0xFDFEFE } );
         this.carMesh = new THREE.Mesh( geometry, material )     
         this.carMesh.castShadow = true
@@ -67,15 +68,14 @@ export class Car {
         scene.add( this.rlWheelMesh )
         scene.add( this.rrWheelMesh )
         
+    }
 
-
-        
+    setPosition( v ) {
+        this.position = v
     }
 
     updateMeshPosition() {
         let pos = new THREE.Vector3(0,0,0)
-
-        let heading = - this.direction.angleTo(new THREE.Vector3(0,0,-1))
 
         var qHeading = new THREE.Quaternion(); // create one and reuse it
         qHeading.setFromUnitVectors( new THREE.Vector3(0,0,-1), this.direction );
@@ -135,14 +135,23 @@ export class Car {
                 this.speed += this.acceleration
             }            
         } else if (pedal === -1) {
-            if (this.speed > this.brakeDeceleration) {
-                this.speed -= this.brakeDeceleration
-            } else {
-                this.speed = 0
+            if (this.speed > 0) {
+                if (this.speed > this.brakeDeceleration) {
+                    this.speed -= this.brakeDeceleration
+                } else {
+                    this.speed = 0
+                }
+            } else if (this.speed <= 0) {
+                if ( this.speed > this.maxReverseSpeed) {
+                    this.speed -= this.acceleration
+                } 
             }
+            
         } else {
             if (this.speed > 0.5) {
                 this.speed -= this.naturalDeceleration
+            } else if (this.speed < -0.5) {
+                this.speed += this.naturalDeceleration
             } else {
                 this.speed = 0
             }
@@ -164,9 +173,7 @@ export class Car {
             }
         }
 
-
-
-        console.log('speed = ', this.speed, ', steering = ', this.steeringAngle)
+        // console.log('speed = ', this.speed, ', steering = ', this.steeringAngle)
 
         let verticalAxis = new THREE.Vector3 (0, 1, 0)
 
@@ -178,7 +185,6 @@ export class Car {
             let rearDisplacement = new THREE.Vector3(0,0,0);
             rearDisplacement.copy(this.position)
             rearDisplacement.add(carDirection)
-
 
             let newFrontWheelDirection = new THREE.Vector3(0,0,0)
             newFrontWheelDirection.copy(this.direction)

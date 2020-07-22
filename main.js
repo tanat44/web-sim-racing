@@ -45,15 +45,29 @@ var car = new Car(scene);
 var loader = new GLTFLoader();
 var trees = []
 loader.load( './models/scene.gltf', function ( gltf ) {
+    const newPosition = new THREE.Vector3(50,0,50)
     const scale = 0.04
+
+    // model
     gltf.scene.scale.set(scale, scale, scale)
     gltf.scene.traverse( function( node ) {
-
-        if ( node.isMesh ) { node.castShadow = true; }
-
+        if ( node.isMesh ) { node.castShadow = true; } // to allow shadow casting on to the scene
     } );
-    trees.push(gltf.scene)
-    scene.add( trees[trees.length - 1] );
+    gltf.scene.position.copy( newPosition )
+
+    // collision box
+    var geometry = new THREE.BoxGeometry( 4, 30, 4 );
+    var material = new THREE.MeshLambertMaterial( { color: 0xFD0EFE } );
+    var collisionBox = new THREE.Mesh( geometry, material )     
+    collisionBox.position.copy( newPosition )
+
+    trees.push( {
+        mesh: gltf.scene,
+        box: collisionBox
+    })
+
+    scene.add( trees[trees.length - 1].mesh );
+    // scene.add( trees[trees.length - 1].box );   
     
 }, undefined, function ( error ) {
 	console.error( error );
@@ -95,7 +109,27 @@ function animate() {
     } else if (keymap[68]) { // d
         steer = 1
     }
+    
+    let currentCarPosition = new THREE.Vector3(0,0,0)
+    currentCarPosition.copy(car.position)
+
     car.updateControl(pedal, steer)
+
+    // collision detection
+    let collide = false
+    for (var i=0; i<trees.length; ++i){
+        if (detectCollisionCubes(car.carMesh, trees[i].box)) {
+            console.log('collided with tree no.', i)
+            collide = true
+            break
+        }
+    }
+    if (collide) {
+        car.position.copy(currentCarPosition)
+    }
+    
+    
+
 
     renderer.render( scene, camera );
 }
@@ -103,7 +137,20 @@ function animate() {
 animate();
 
 
-
+function detectCollisionCubes(object1, object2){
+    object1.geometry.computeBoundingBox(); //not needed if its already calculated
+    object2.geometry.computeBoundingBox();
+    object1.updateMatrixWorld();
+    object2.updateMatrixWorld();
+    
+    var box1 = object1.geometry.boundingBox.clone();
+    box1.applyMatrix4(object1.matrixWorld);
+  
+    var box2 = object2.geometry.boundingBox.clone();
+    box2.applyMatrix4(object2.matrixWorld);
+  
+    return box1.intersectsBox(box2);
+}
 
 // document.addEventListener("keydown", onDocumentKeyDown, false);
 function onDocumentKeyDown(event) {

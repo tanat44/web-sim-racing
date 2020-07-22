@@ -17,6 +17,7 @@ Mini racing game that runs on browser.
 - 22/7/2020 
     - Setup development server to allow javascript 'import' keyword
     - Load .gltf model and cast shadow
+
     ![Cat With Tree](./images/200722.PNG)
 - 21/7/2020
     - Model car accelation / steering control using bicycle model
