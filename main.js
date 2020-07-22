@@ -44,7 +44,8 @@ var car = new Car(scene);
 // load model
 var loader = new GLTFLoader();
 var trees = []
-loader.load( './models/scene.gltf', function ( gltf ) {
+const NUM_TREES = 4
+loader.load( './models/tree.gltf', function ( gltf ) {
     const newPosition = new THREE.Vector3(50,0,50)
     const scale = 0.04
 
@@ -68,9 +69,8 @@ loader.load( './models/scene.gltf', function ( gltf ) {
 
     scene.add( trees[trees.length - 1].mesh );
     // scene.add( trees[trees.length - 1].box );   
-    
 }, undefined, function ( error ) {
-	console.error( error );
+	console.error( 'model loading error', error );
 } );
 
 
